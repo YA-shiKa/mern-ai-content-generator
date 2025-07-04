@@ -9,7 +9,7 @@ const CheckoutForm = () => {
   const [searchParams] = useSearchParams();
   const plan = params.plan;
   const amount = searchParams.get("amount");
-  const [errorMessage, setErrorMessage] = useState(null); // This state should only hold a string or null
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const razorpayKey = process.env.REACT_APP_RAZORPAY_KEY_ID;
 
@@ -31,21 +31,24 @@ const CheckoutForm = () => {
   // Helper function to extract a displayable message from an error object
   const getErrorMessage = (error) => {
     if (!error) return "An unknown error occurred.";
-    if (typeof error === 'string') return error; // If it's already a string
+    if (typeof error === "string") return error;
 
     // Check for common error structures
     if (error.response && error.response.data) {
-      // Prioritize 'description' for Razorpay specific errors, then 'error', then 'message'
-      return error.response.data.description || error.response.data.error || error.response.data.message || JSON.stringify(error.response.data);
+      return (
+        error.response.data.description ||
+        error.response.data.error ||
+        error.response.data.message ||
+        JSON.stringify(error.response.data)
+      );
     }
-    // Fallback for general JS errors or other structures
+
     return error.message || JSON.stringify(error);
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMessage(null); // Clear previous errors on new submission
+    setErrorMessage(null);
 
     try {
       const paymentData = { amount, subscriptionPlan: plan };
@@ -84,12 +87,10 @@ const CheckoutForm = () => {
                   alert("Payment successful!");
                   window.location.href = "/success";
                 } else {
-                  // Ensure we extract a string message from the result
                   setErrorMessage(getErrorMessage(result.error || "Payment verification failed."));
                 }
               } catch (err) {
                 console.error("Verification error:", err);
-                // Ensure we extract a string message from the catch error
                 setErrorMessage(getErrorMessage(err));
               }
             },
@@ -107,38 +108,24 @@ const CheckoutForm = () => {
         },
         onError: (error) => {
           console.error("Payment creation error:", error);
-          // Use the helper to get a displayable string
           setErrorMessage(getErrorMessage(error));
         },
       });
     } catch (error) {
       console.error("Unexpected error in handleSubmit:", error);
-      // Use the helper to get a displayable string
       setErrorMessage(getErrorMessage(error));
     }
   };
 
   return (
     <div className="bg-gray-900 h-screen flex justify-center items-center">
-      <form
-        onSubmit={handleSubmit}
-        className="w-96 mx-auto my-4 p-6 bg-white rounded-lg shadow-md"
-      >
+      <form onSubmit={handleSubmit} className="w-96 mx-auto my-4 p-6 bg-white rounded-lg shadow-md">
         <h2 className="text-xl font-bold mb-4 text-center">
           Pay for {plan} Plan - ₹{amount}
         </h2>
 
-        {mutation.isPending && (
-          <StatusMessage type="loading" message="Processing payment..." />
-        )}
-
-        {mutation.isError && (
-          <StatusMessage
-            type="error"
-            // Use the helper for the message prop as well, for consistency
-            message={getErrorMessage(mutation.error)}
-          />
-        )}
+        {mutation.isPending && <StatusMessage type="loading" message="Processing payment..." />}
+        {mutation.isError && <StatusMessage type="error" message={getErrorMessage(mutation.error)} />}
 
         <button
           type="submit"
@@ -147,10 +134,7 @@ const CheckoutForm = () => {
           Pay with Razorpay
         </button>
 
-        {errorMessage && (
-          // This div directly renders errorMessage, which is now guaranteed to be a string
-          <div className="text-red-500 mt-4">{errorMessage}</div>
-        )}
+        {errorMessage && <div className="text-red-500 mt-4">{errorMessage}</div>}
       </form>
     </div>
   );

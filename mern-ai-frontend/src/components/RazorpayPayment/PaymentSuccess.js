@@ -5,7 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 import { verifyRazorpayPaymentAPI as verifyPaymentAPI } from "../../apis/razorPayment/razorPayment";
 
 const PaymentSuccess = () => {
-  // Get search parameters
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get("order_id");
   const paymentId = searchParams.get("payment_id");
@@ -33,13 +32,11 @@ const PaymentSuccess = () => {
     queryKey: ["verify-razorpay-payment", orderId],
     queryFn: () => verifyPaymentAPI(payload),
     enabled: !!orderId && !!paymentId && !!signature,
-    // Add an onError callback for debugging if needed
     onError: (err) => {
       console.error("PaymentSuccess - Query error:", err);
     }
   });
 
-  // Helper function to extract a displayable message from an error object (copied for consistency)
   const getErrorMessage = (error) => {
     if (!error) return "An unknown error occurred.";
     if (typeof error === 'string') return error;
@@ -49,7 +46,6 @@ const PaymentSuccess = () => {
     }
     return error.message || JSON.stringify(error);
   };
-
 
   return (
     <div className="max-w-lg mx-auto my-10 p-6 bg-white shadow-md rounded-lg">
@@ -65,11 +61,10 @@ const PaymentSuccess = () => {
           <FaTimesCircle className="text-5xl mb-3" />
           <p className="text-xl">Payment verification failed</p>
           <p className="text-gray-600 mt-2">
-            {/* Display a more specific error if available from the query.error object */}
             {getErrorMessage(error || "An error occurred during verification. Please try again or contact support.")}
           </p>
           <Link
-            to="/" // Or a more appropriate retry/home page
+            to="/"
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4 inline-block"
           >
             Go to Home
