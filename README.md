@@ -42,8 +42,11 @@ https://github.com/user-attachments/assets/86fddffd-579b-4401-a606-ae72a4db1aa6
 ---
 
 ## 📈 Future Enhancements
+
 ✅ Advanced prompt templates (ads, blogs, stories)
+
 ✅ Support for Indian languages
+
 ✅ Admin panel for managing users & payments
 
 ---
