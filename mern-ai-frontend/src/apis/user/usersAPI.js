@@ -1,4 +1,7 @@
+
+
 import axios from "axios";
+const API = import.meta.env.VITE_API_BASE_URL;
 //=======Registration=====
 
 export const registerAPI = async (userData) => {
